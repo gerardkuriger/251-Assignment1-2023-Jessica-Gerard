@@ -12,7 +12,7 @@ public class Main extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(650, 700)); /// can change
         setLayout(null); /// can also change
-        // test commit change
+        // test commit change 2
 
         /// Adding menu to JFrame
         MenuBar menu = new MenuBar();

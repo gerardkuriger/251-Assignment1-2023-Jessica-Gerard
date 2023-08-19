@@ -3,30 +3,40 @@ package org.example;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 public class MenuBar implements ActionListener  {
     JMenu fileMenu, searchMenu, viewMenu, manageMenu, helpMenu;
     JMenuItem newItem, openItem, saveItem, exitItem;
     private JMenuBar menuBar;
+    // File properties might change depending on weather this schema works (May move to Main class but that will result in a dependent link between MenuBar and Main)
+    private String FilePath = ""; // The Directory containing the file
+    private String FileName = ""; // The File name of the current file
+    private String FileType = ""; // The type of file i.e. txt and java
 
     public void actionPerformed(ActionEvent event) {
         JComponent source = (JComponent) event.getSource(); /// Get source of action
-
         if (source == newItem) {
             /// Operations for new
         }
-
         if (source == saveItem) {
             /// Operations to save
         }
-
         if (source == openItem) {
-            /// Operations to open text file
-        }
+            System.out.println("Open");
+            JFileChooser fileChooser = new JFileChooser(); // Open the file chooser dialog and allow the user to select the file they want to view
+            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+            int result = fileChooser.showOpenDialog( null );
 
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+
+                System.out.println(file.getPath());
+                System.out.println(file.getName());
+            }
+        }
         if (source == exitItem) {
             System.exit(0);
         }
-
     }
 
 

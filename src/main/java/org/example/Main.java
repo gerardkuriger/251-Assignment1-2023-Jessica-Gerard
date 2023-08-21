@@ -3,9 +3,13 @@ package org.example;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
-public class Main extends JFrame {
-    private static JTextArea area;
+public class Main extends JFrame implements ActionListener {
+    JMenu fileMenu, searchMenu, viewMenu, manageMenu, helpMenu;
+    JMenuItem newItem, openItem, saveItem, exitItem;
+
     public static void main(String[] args) { new Main(); }
 
     public Main() {
@@ -14,17 +18,75 @@ public class Main extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(650, 700)); /// can change
         setLayout(null); /// can also change
+        // test commit change 2
 
         /// Adding menu to JFrame
-        MenuBar menu = new MenuBar();
-        setJMenuBar(menu.getMenu());
+        JMenuBar menuBar = new JMenuBar();
 
-        // Adding TextAria
-        area = new JTextArea();
+        /// Creating menus
+        fileMenu = new JMenu("File");
+        searchMenu = new JMenu("Search");
+        viewMenu = new JMenu("View");
+        manageMenu = new JMenu("Manage");
+        helpMenu = new JMenu("Help");
+
+        /// Adding items and action listeners
+        newItem = new JMenuItem("New");
+        newItem.addActionListener(this);
+        openItem = new JMenuItem("Open");
+        openItem.addActionListener(this);
+        saveItem = new JMenuItem("Save");
+        saveItem.addActionListener(this);
+        exitItem = new JMenuItem("Exit");
+        exitItem.addActionListener(this);
+
+        /// Adding items to menus
+        fileMenu.add(newItem);
+        fileMenu.add(openItem);
+        fileMenu.add(saveItem);
+        fileMenu.add(exitItem);
+
+        /// Adding menus to menu bar
+        menuBar.add(fileMenu);
+        menuBar.add(searchMenu);
+        menuBar.add(viewMenu);
+        menuBar.add(manageMenu);
+        menuBar.add(helpMenu);
+        setJMenuBar(menuBar);
 
         pack();
         setVisible(true);
 
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent event) {
+        JComponent source = (JComponent) event.getSource(); /// Get source of action
+        if (source.equals(newItem)) {
+            System.out.println("New"); // To suppress warning
+            /// Operations for new
+        }
+        if (source.equals(saveItem)) {
+            System.out.println("Save"); // To suppress warning
+            /// Operations to save
+        }
+        if (source.equals(openItem)) {
+            System.out.println("Open");
+            JFileChooser fileChooser = new JFileChooser(); // Open the file chooser dialog and allow the user to select the file they want to view
+            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+            int result = fileChooser.showOpenDialog( null );
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File file = new File( fileChooser.getSelectedFile().getAbsolutePath() );
+
+
+                System.out.println(file.getAbsolutePath());
+                System.out.println(file.getName());
+            }
+        }
+        if (source.equals(exitItem)) {
+            System.exit(0);
+        }
     }
 
 }

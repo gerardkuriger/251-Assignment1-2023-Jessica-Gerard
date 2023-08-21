@@ -52,7 +52,8 @@ public class Main extends JFrame implements ActionListener {
         menuBar.add(viewMenu);
         menuBar.add(manageMenu);
         menuBar.add(helpMenu);
-        setJMenuBar(menuBar);
+
+        setJMenuBar(menuBar);       // Set the menu bar
 
         pack();
         setVisible(true);
@@ -88,5 +89,4 @@ public class Main extends JFrame implements ActionListener {
             System.exit(0);
         }
     }
-
 }

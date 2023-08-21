@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class Main extends JFrame {
+    private static JTextArea area;
     public static void main(String[] args) { new Main(); }
 
     public Main() {
@@ -13,11 +14,13 @@ public class Main extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(650, 700)); /// can change
         setLayout(null); /// can also change
-        // test commit change 2
 
         /// Adding menu to JFrame
         MenuBar menu = new MenuBar();
         setJMenuBar(menu.getMenu());
+
+        // Adding TextAria
+        area = new JTextArea();
 
         pack();
         setVisible(true);

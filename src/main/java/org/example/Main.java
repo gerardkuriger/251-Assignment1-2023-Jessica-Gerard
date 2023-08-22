@@ -113,7 +113,11 @@ public class Main extends JFrame implements ActionListener {
             System.exit(0);
         }
         if (source.equals(aboutItem)) {
-            String message = "Team Members:\n" + "- Gerard Kuriger\n" + "- Jessica Lang \n" +" This is a text editor."; /// Creating the message
+            String message = """
+                    Team Members:
+                    - Gerard Kuriger
+                    - Jessica Lang\s
+                     This is a text editor."""; /// Creating the message
             JOptionPane.showMessageDialog(this, message, "About", JOptionPane.INFORMATION_MESSAGE); /// Displaying the information message
         }
     }

@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class Main extends JFrame implements ActionListener {
@@ -40,7 +42,7 @@ public class Main extends JFrame implements ActionListener {
         /// Adding items and action listeners
         newItem = new JMenuItem("New");
         openItem = new JMenuItem("Open");
-        saveItem = new JMenuItem("Save");
+        saveItem = new JMenuItem("Save As");
         exitItem = new JMenuItem("Exit");
         findItem = new JMenuItem("Find");
         aboutItem = new JMenuItem("About");
@@ -90,7 +92,7 @@ public class Main extends JFrame implements ActionListener {
         }
         if (source.equals(saveItem)) {
             System.out.println("Save"); // To suppress warning
-            /// Operations to save
+            Save();
         }
         if (source.equals(openItem)) {
             Open(); // Create open function
@@ -151,6 +153,29 @@ public class Main extends JFrame implements ActionListener {
             }
         } else {
             System.out.println("No Items found");
+        }
+    }
+
+    private void Save() {
+        System.out.println("Save");
+
+        /// Navigate to directory
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        int result = fileChooser.showSaveDialog(null);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            try (PrintWriter writer = new PrintWriter(selectedFile)) {
+                String textToSave = area.getText(); /// Get text from TextArea
+                writer.write(textToSave);
+                writer.flush();
+                String message = "File saved sucessfully";
+                JOptionPane.showMessageDialog(this, message, "Save success", JOptionPane.INFORMATION_MESSAGE); /// Display save success message
+                System.out.println("File saved");
+            } catch (IOException e) {
+                System.err.println("Error saving file:" + e.getMessage());
+            }
         }
     }
 }

@@ -98,6 +98,9 @@ public class Main extends JFrame implements ActionListener {
         if (source.equals(exitItem)) {
             System.exit(0);
         }
+        if (source.equals(findItem)) {
+            Search( JOptionPane.showInputDialog(this, "Find") );
+        }
         if (source.equals(aboutItem)) {
             String message = """
                     Team Members:
@@ -128,7 +131,6 @@ public class Main extends JFrame implements ActionListener {
                 }
             }
         }
-    }
 
     private void Search( String searchTerm ){
         System.out.println("Search");

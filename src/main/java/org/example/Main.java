@@ -83,25 +83,7 @@ public class Main extends JFrame implements ActionListener {
             /// Operations to save
         }
         if (source.equals(openItem)) {
-            System.out.println("Open");
-            JFileChooser fileChooser = new JFileChooser(); // Open the file chooser dialog and allow the user to select the file they want to view
-            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-            int result = fileChooser.showOpenDialog( null );
-
-            if (result == JFileChooser.APPROVE_OPTION) {
-                try {
-                    File file = new File( fileChooser.getSelectedFile().getAbsolutePath() );
-                    StringBuilder data = new StringBuilder(); // define string builder
-                    Scanner myReader = new Scanner(file); // Init Scanner
-
-                    while (myReader.hasNextLine()){
-                        data.append(myReader.nextLine()).append('\n'); // get line and append new line to maintain formatting
-                    }
-                    area.setText( data.toString() ); // set text area
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            Open(); // Create open function
         }
         if (source.equals(exitItem)) {
             System.exit(0);
@@ -113,6 +95,27 @@ public class Main extends JFrame implements ActionListener {
                     - Jessica Lang\s
                      This is a text editor."""; /// Creating the message
             JOptionPane.showMessageDialog(this, message, "About", JOptionPane.INFORMATION_MESSAGE); /// Displaying the information message
+        }
+    }
+
+    private void Open(){
+        JFileChooser fileChooser = new JFileChooser(); // Open the file chooser dialog and allow the user to select the file they want to view
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        int result = fileChooser.showOpenDialog( null );
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            try {
+                File file = new File( fileChooser.getSelectedFile().getAbsolutePath() );
+                StringBuilder data = new StringBuilder(); // define string builder
+                Scanner myReader = new Scanner(file); // Init Scanner
+
+                while (myReader.hasNextLine()){
+                    data.append(myReader.nextLine()).append('\n'); // get line and append new line to maintain formatting
+                }
+                area.setText( data.toString() ); // set text area
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

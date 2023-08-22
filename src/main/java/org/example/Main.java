@@ -5,10 +5,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class Main extends JFrame implements ActionListener {
     JMenu fileMenu, searchMenu, viewMenu, manageMenu, helpMenu;
     JMenuItem newItem, openItem, saveItem, exitItem, aboutItem;
+    private static JTextArea area;
 
     public static void main(String[] args) { new Main(); }
 
@@ -58,6 +61,13 @@ public class Main extends JFrame implements ActionListener {
 
         setJMenuBar(menuBar);       // Set the menu bar
 
+        // Adding text field
+        area = new JTextArea();
+        area.setSize(650, 700);
+        add(area);
+
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+
         pack();
         setVisible(true);
 
@@ -82,6 +92,17 @@ public class Main extends JFrame implements ActionListener {
 
             if (result == JFileChooser.APPROVE_OPTION) {
                 File file = new File( fileChooser.getSelectedFile().getAbsolutePath() );
+                try {
+                    StringBuilder data = new StringBuilder(); // define string builder
+                    Scanner myReader = new Scanner(file); // Init Scanner
+
+                    while (myReader.hasNextLine()){
+                        data.append(myReader.nextLine()).append('\n'); // get line and append new line to maintain formatting
+                    }
+                    area.setText( data.toString() ); // set text area
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
 
 
                 System.out.println(file.getAbsolutePath());

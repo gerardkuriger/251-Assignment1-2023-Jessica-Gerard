@@ -21,7 +21,6 @@ public class Main extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(650, 700)); /// can change
         setLayout(null); /// can also change
-        // test commit change 2
 
         /// Adding menu to JFrame
         JMenuBar menuBar = new JMenuBar();
@@ -59,18 +58,17 @@ public class Main extends JFrame implements ActionListener {
         menuBar.add(manageMenu);
         menuBar.add(helpMenu);
 
-        setJMenuBar(menuBar);       // Set the menu bar
+        // Set the menu bar
+        setJMenuBar(menuBar);
 
         // Adding text field
         area = new JTextArea();
         area.setSize(650, 700);
         add(area);
-
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         pack();
         setVisible(true);
-
     }
 
     @Override
@@ -91,8 +89,8 @@ public class Main extends JFrame implements ActionListener {
             int result = fileChooser.showOpenDialog( null );
 
             if (result == JFileChooser.APPROVE_OPTION) {
-                File file = new File( fileChooser.getSelectedFile().getAbsolutePath() );
                 try {
+                    File file = new File( fileChooser.getSelectedFile().getAbsolutePath() );
                     StringBuilder data = new StringBuilder(); // define string builder
                     Scanner myReader = new Scanner(file); // Init Scanner
 
@@ -103,10 +101,6 @@ public class Main extends JFrame implements ActionListener {
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
-
-
-                System.out.println(file.getAbsolutePath());
-                System.out.println(file.getName());
             }
         }
         if (source.equals(exitItem)) {

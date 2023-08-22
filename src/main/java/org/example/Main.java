@@ -1,6 +1,10 @@
 package org.example;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
+import java.awt.Color;
+import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,8 +14,9 @@ import java.util.Scanner;
 
 public class Main extends JFrame implements ActionListener {
     JMenu fileMenu, searchMenu, viewMenu, manageMenu, helpMenu;
-    JMenuItem newItem, openItem, saveItem, exitItem, aboutItem;
+    JMenuItem newItem, openItem, saveItem, exitItem, findItem, aboutItem;
     private static JTextArea area;
+    private Color highLighterColor = Color.ORANGE;
 
     public static void main(String[] args) { new Main(); }
 
@@ -34,14 +39,18 @@ public class Main extends JFrame implements ActionListener {
 
         /// Adding items and action listeners
         newItem = new JMenuItem("New");
-        newItem.addActionListener(this);
         openItem = new JMenuItem("Open");
-        openItem.addActionListener(this);
         saveItem = new JMenuItem("Save");
-        saveItem.addActionListener(this);
         exitItem = new JMenuItem("Exit");
-        exitItem.addActionListener(this);
+        findItem = new JMenuItem("Find");
         aboutItem = new JMenuItem("About");
+
+        /// Create Action listeners
+        newItem.addActionListener(this);
+        openItem.addActionListener(this);
+        saveItem.addActionListener(this);
+        exitItem.addActionListener(this);
+        findItem.addActionListener(this);
         aboutItem.addActionListener(this);
 
         /// Adding items to menus
@@ -49,6 +58,7 @@ public class Main extends JFrame implements ActionListener {
         fileMenu.add(openItem);
         fileMenu.add(saveItem);
         fileMenu.add(exitItem);
+        searchMenu.add(findItem);
         helpMenu.add(aboutItem);
 
         /// Adding menus to menu bar
@@ -109,13 +119,36 @@ public class Main extends JFrame implements ActionListener {
                 StringBuilder data = new StringBuilder(); // define string builder
                 Scanner myReader = new Scanner(file); // Init Scanner
 
-                while (myReader.hasNextLine()){
-                    data.append(myReader.nextLine()).append('\n'); // get line and append new line to maintain formatting
+                    while (myReader.hasNextLine()){
+                        data.append(myReader.nextLine()).append('\n'); // get line and append new line to maintain formatting
+                    }
+                    area.setText( data.toString() ); // set text area
+                } catch (FileNotFoundException e) {
+                    System.err.println( "Error "+ e.getMessage() );
                 }
-                area.setText( data.toString() ); // set text area
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
             }
+        }
+    }
+
+    private void Search( String searchTerm ){
+        System.out.println("Search");
+
+        String searchText = area.getText().toLowerCase();
+        Highlighter high = area.getHighlighter();
+        high.removeAllHighlights(); // clear any preexisting highlights
+
+        if ( searchText.contains(searchTerm.toLowerCase()) ) { // not case-sensitive
+            System.out.println(searchTerm + " Found");
+            try{
+                int s = searchText.indexOf(searchTerm);
+                Highlighter.HighlightPainter DefaultHighlightPainter = new DefaultHighlightPainter( highLighterColor );
+                high.addHighlight( s, s+searchTerm.length(), DefaultHighlightPainter );
+
+            }catch (BadLocationException e){
+                System.err.println( "Error "+ e.getMessage() );
+            }
+        } else {
+            System.out.println("No Items found");
         }
     }
 }

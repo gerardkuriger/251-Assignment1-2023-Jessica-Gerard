@@ -8,7 +8,7 @@ import java.io.File;
 
 public class Main extends JFrame implements ActionListener {
     JMenu fileMenu, searchMenu, viewMenu, manageMenu, helpMenu;
-    JMenuItem newItem, openItem, saveItem, exitItem;
+    JMenuItem newItem, openItem, saveItem, exitItem, aboutItem;
 
     public static void main(String[] args) { new Main(); }
 
@@ -39,12 +39,15 @@ public class Main extends JFrame implements ActionListener {
         saveItem.addActionListener(this);
         exitItem = new JMenuItem("Exit");
         exitItem.addActionListener(this);
+        aboutItem = new JMenuItem("About");
+        aboutItem.addActionListener(this);
 
         /// Adding items to menus
         fileMenu.add(newItem);
         fileMenu.add(openItem);
         fileMenu.add(saveItem);
         fileMenu.add(exitItem);
+        helpMenu.add(aboutItem);
 
         /// Adding menus to menu bar
         menuBar.add(fileMenu);
@@ -87,6 +90,10 @@ public class Main extends JFrame implements ActionListener {
         }
         if (source.equals(exitItem)) {
             System.exit(0);
+        }
+        if (source.equals(aboutItem)) {
+            String message = "Team Members:\n" + "- Gerard Kuriger\n" + "- Jessica Lang \n" +" This is a text editor."; /// Creating the message
+            JOptionPane.showMessageDialog(this, message, "About", JOptionPane.INFORMATION_MESSAGE); /// Displaying the information message
         }
     }
 }

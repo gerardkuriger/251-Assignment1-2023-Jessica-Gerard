@@ -134,7 +134,7 @@ public class Main extends JFrame implements ActionListener {
             }
         }
 
-    private void Search( String searchTerm ){
+    private void Search( String searchTerm ){ // finds first instance of
         System.out.println("Search");
 
         String searchText = area.getText().toLowerCase();

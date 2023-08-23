@@ -16,11 +16,11 @@ import java.util.Scanner;
 
 public class Main extends JFrame implements ActionListener {
     JMenu fileMenu, searchMenu, viewMenu, manageMenu, helpMenu;
-    JMenuItem newItem, openItem, saveItem, exitItem, findItem, aboutItem;
+    JMenuItem newItem, openItem, saveAsItem, saveItem, exitItem, findItem, aboutItem;
     private static JTextArea area;
     private static Highlighter high;
     private Color highLighterColor = Color.ORANGE;
-    private static int areaHash;
+    private File openedFile = null;
 
     public static void main(String[] args) { new Main(); }
 
@@ -44,7 +44,8 @@ public class Main extends JFrame implements ActionListener {
         /// Adding items and action listeners
         newItem = new JMenuItem("New");
         openItem = new JMenuItem("Open");
-        saveItem = new JMenuItem("Save As");
+        saveItem = new JMenuItem("Save");
+        saveAsItem = new JMenuItem("Save as");
         exitItem = new JMenuItem("Exit");
         findItem = new JMenuItem("Find");
         aboutItem = new JMenuItem("About");
@@ -53,6 +54,7 @@ public class Main extends JFrame implements ActionListener {
         newItem.addActionListener(this);
         openItem.addActionListener(this);
         saveItem.addActionListener(this);
+        saveAsItem.addActionListener(this);
         exitItem.addActionListener(this);
         findItem.addActionListener(this);
         aboutItem.addActionListener(this);
@@ -61,6 +63,7 @@ public class Main extends JFrame implements ActionListener {
         fileMenu.add(newItem);
         fileMenu.add(openItem);
         fileMenu.add(saveItem);
+        fileMenu.add(saveAsItem);
         fileMenu.add(exitItem);
         searchMenu.add(findItem);
         helpMenu.add(aboutItem);
@@ -89,14 +92,11 @@ public class Main extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         JComponent source = (JComponent) event.getSource(); /// Get source of action
         if (source.equals(newItem)) {
-            if ( area.getText().isEmpty() || areaHash == area.getText().hashCode() ){
-                New();
-            } else {
-                System.out.println("Area is not blank");
-                int res = JOptionPane.showConfirmDialog( this, "Save Changes?");
-                System.out.println(res);
-            }
+            System.out.println("New"); // To suppress warning
             /// Operations for new
+        }
+        if (source.equals(saveAsItem)) {
+            SaveAs();
         }
         if (source.equals(saveItem)) {
             Save();
@@ -122,69 +122,56 @@ public class Main extends JFrame implements ActionListener {
         }
     }
 
-    private void New(){
-        System.out.println("New");
-        // If Test Field is not empty prompt to save
-
-
-    }
-
     private void Open(){
         JFileChooser fileChooser = new JFileChooser(); // Open the file chooser dialog and allow the user to select the file they want to view
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         int result = fileChooser.showOpenDialog( null );
 
         if (result == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
+            File selectedFile = fileChooser.getSelectedFile();
+
             try {
+                File file = new File( fileChooser.getSelectedFile().getAbsolutePath() );
                 StringBuilder data = new StringBuilder(); // define string builder
                 Scanner myReader = new Scanner(file); // Init Scanner
 
                 while (myReader.hasNextLine()){
                     data.append(myReader.nextLine()).append('\n'); // get line and append new line to maintain formatting
                 }
-                areaHash = data.toString().hashCode();
                 area.setText( data.toString() ); // set text area
-                // Enable editing of text
+                openedFile = selectedFile; /// Informs save method
             } catch (FileNotFoundException e) {
                 System.err.println( "Error "+ e.getMessage() );
             }
         }
     }
 
-    private void Search( String searchTerm, String searchText, int b ) { // finds first instance of
+    private void Search( String searchTerm, String searchText, int b ){ // finds first instance of
         System.out.println("Search");
 
-        // If Editing is disabled then no new files have been started or no old ones opened
-
-        if (searchText.contains(searchTerm.toLowerCase())) { // not case-sensitive
+        if ( searchText.contains(searchTerm.toLowerCase()) ) { // not case-sensitive
             System.out.println(searchTerm + " Found");
-            try {
+            try{
                 int s = searchText.indexOf(searchTerm);
 
-                Highlighter.HighlightPainter DefaultHighlightPainter = new DefaultHighlightPainter(highLighterColor);
+                Highlighter.HighlightPainter DefaultHighlightPainter = new DefaultHighlightPainter( highLighterColor );
                 // Apply Beginning offset to account for removed searched section
-                high.addHighlight(b + s, b + s + searchTerm.length(), DefaultHighlightPainter);
+                high.addHighlight( b+s, b+s+searchTerm.length(), DefaultHighlightPainter );
                 // Remove searched section from searchText
-                searchText = searchText.substring(s + searchTerm.length());
+                searchText = searchText.substring( s+searchTerm.length() );
                 // Recurse
-                Search(searchTerm, searchText, b + s + searchTerm.length());
+                Search( searchTerm, searchText, b+s+searchTerm.length() );
 
-            } catch (BadLocationException e) {
-                System.err.println("Error " + e.getMessage());
+            }catch (BadLocationException e){
+                System.err.println( "Error "+ e.getMessage() );
             }
         } else {
             System.out.println("No Items found");
         }
     }
 
-    private void Save() {
-        System.out.println("Save");
-
-//        if ( area.getText().isEmpty() || areaHash == area.getText().hashCode() ){
-//            JOptionPane.showMessageDialog(this, "No content to save", "Save error", JOptionPane.INFORMATION_MESSAGE);
-//        } else {// Skip save as there have been no changes
-            /// Navigate to directory
+    private void SaveAs() {
+        /// Navigate to directory
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         int result = fileChooser.showSaveDialog(null);
@@ -198,10 +185,27 @@ public class Main extends JFrame implements ActionListener {
                 String message = "File saved successfully";
                 JOptionPane.showMessageDialog(this, message, "Save success", JOptionPane.INFORMATION_MESSAGE); /// Display save success message
                 System.out.println("File saved");
+                openedFile = selectedFile;
             } catch (IOException e) {
                 System.err.println("Error saving file:" + e.getMessage());
             }
-//            }
         }
     }
+
+    private void Save() {
+        if (openedFile != null) { /// Check if file has been opened
+            try (PrintWriter writer = new PrintWriter(openedFile)) {
+                String textToSave = area.getText(); /// Get text
+                writer.write(textToSave); /// Save to file
+                writer.flush();
+                String message = "File saved successfully";
+                JOptionPane.showMessageDialog(this, message, "Save success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException e) {
+                System.err.println("Error saving file: " + e.getMessage());
+            }
+        } else { /// If file has not been opened
+            JOptionPane.showMessageDialog(this, "Please open a file or create a new one before saving.", "Save Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 }

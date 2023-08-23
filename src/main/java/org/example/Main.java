@@ -18,6 +18,7 @@ public class Main extends JFrame implements ActionListener {
     JMenu fileMenu, searchMenu, viewMenu, manageMenu, helpMenu;
     JMenuItem newItem, openItem, saveItem, exitItem, findItem, aboutItem;
     private static JTextArea area;
+    private static Highlighter high;
     private Color highLighterColor = Color.ORANGE;
 
     public static void main(String[] args) { new Main(); }
@@ -101,7 +102,9 @@ public class Main extends JFrame implements ActionListener {
             System.exit(0);
         }
         if (source.equals(findItem)) {
-            Search( JOptionPane.showInputDialog(this, "Find") );
+            high = area.getHighlighter();
+            high.removeAllHighlights(); // clear any preexisting highlights
+            Search( JOptionPane.showInputDialog(this, "Find"), area.getText().toLowerCase(), 0 );
         }
         if (source.equals(aboutItem)) {
             String message = """
@@ -134,19 +137,21 @@ public class Main extends JFrame implements ActionListener {
             }
         }
 
-    private void Search( String searchTerm ){ // finds first instance of
+    private void Search( String searchTerm, String searchText, int b ){ // finds first instance of
         System.out.println("Search");
-
-        String searchText = area.getText().toLowerCase();
-        Highlighter high = area.getHighlighter();
-        high.removeAllHighlights(); // clear any preexisting highlights
 
         if ( searchText.contains(searchTerm.toLowerCase()) ) { // not case-sensitive
             System.out.println(searchTerm + " Found");
             try{
                 int s = searchText.indexOf(searchTerm);
+
                 Highlighter.HighlightPainter DefaultHighlightPainter = new DefaultHighlightPainter( highLighterColor );
-                high.addHighlight( s, s+searchTerm.length(), DefaultHighlightPainter );
+                // Apply Beginning offset to account for removed searched section
+                high.addHighlight( b+s, b+s+searchTerm.length(), DefaultHighlightPainter );
+                // Remove searched section from searchText
+                searchText = searchText.substring( s+searchTerm.length() );
+                // Recurse
+                Search( searchTerm, searchText, b+s+searchTerm.length() );
 
             }catch (BadLocationException e){
                 System.err.println( "Error "+ e.getMessage() );

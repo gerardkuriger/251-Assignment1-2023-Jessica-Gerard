@@ -92,7 +92,6 @@ public class Main extends JFrame implements ActionListener {
             /// Operations for new
         }
         if (source.equals(saveItem)) {
-            System.out.println("Save"); // To suppress warning
             Save();
         }
         if (source.equals(openItem)) {
@@ -127,15 +126,15 @@ public class Main extends JFrame implements ActionListener {
                 StringBuilder data = new StringBuilder(); // define string builder
                 Scanner myReader = new Scanner(file); // Init Scanner
 
-                    while (myReader.hasNextLine()){
-                        data.append(myReader.nextLine()).append('\n'); // get line and append new line to maintain formatting
-                    }
-                    area.setText( data.toString() ); // set text area
-                } catch (FileNotFoundException e) {
-                    System.err.println( "Error "+ e.getMessage() );
+                while (myReader.hasNextLine()){
+                    data.append(myReader.nextLine()).append('\n'); // get line and append new line to maintain formatting
                 }
+                area.setText( data.toString() ); // set text area
+            } catch (FileNotFoundException e) {
+                System.err.println( "Error "+ e.getMessage() );
             }
         }
+    }
 
     private void Search( String searchTerm, String searchText, int b ){ // finds first instance of
         System.out.println("Search");
@@ -175,7 +174,7 @@ public class Main extends JFrame implements ActionListener {
                 String textToSave = area.getText(); /// Get text from TextArea
                 writer.write(textToSave);
                 writer.flush();
-                String message = "File saved sucessfully";
+                String message = "File saved successfully";
                 JOptionPane.showMessageDialog(this, message, "Save success", JOptionPane.INFORMATION_MESSAGE); /// Display save success message
                 System.out.println("File saved");
             } catch (IOException e) {

@@ -16,11 +16,12 @@ import java.util.Scanner;
 
 public class Main extends JFrame implements ActionListener {
     JMenu fileMenu, searchMenu, viewMenu, manageMenu, helpMenu;
-    JMenuItem newItem, openItem, saveAsItem, saveItem, exitItem, findItem, aboutItem;
+    JMenuItem newItem, openItem, saveItem, saveAsItem, exitItem, findItem, aboutItem;
     private static JTextArea area;
     private static Highlighter high;
     private Color highLighterColor = Color.ORANGE;
     private File openedFile = null;
+    private static int areaHash;
 
     public static void main(String[] args) { new Main(); }
 
@@ -92,7 +93,13 @@ public class Main extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         JComponent source = (JComponent) event.getSource(); /// Get source of action
         if (source.equals(newItem)) {
-            System.out.println("New"); // To suppress warning
+            if ( area.getText().isEmpty() || areaHash == area.getText().hashCode() ){
+                New();
+            } else {
+                System.out.println("Area is not blank");
+                int res = JOptionPane.showConfirmDialog( this, "Save Changes?");
+                System.out.println(res);
+            }
             /// Operations for new
         }
         if (source.equals(saveAsItem)) {
@@ -122,6 +129,13 @@ public class Main extends JFrame implements ActionListener {
         }
     }
 
+    private void New(){
+        System.out.println("New");
+        // If Test Field is not empty prompt to save
+
+
+    }
+
     private void Open(){
         JFileChooser fileChooser = new JFileChooser(); // Open the file chooser dialog and allow the user to select the file they want to view
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
@@ -131,13 +145,14 @@ public class Main extends JFrame implements ActionListener {
             File selectedFile = fileChooser.getSelectedFile();
 
             try {
-                File file = new File( fileChooser.getSelectedFile().getAbsolutePath() );
+                File file = new File( selectedFile.getAbsolutePath() );
                 StringBuilder data = new StringBuilder(); // define string builder
                 Scanner myReader = new Scanner(file); // Init Scanner
 
                 while (myReader.hasNextLine()){
                     data.append(myReader.nextLine()).append('\n'); // get line and append new line to maintain formatting
                 }
+                areaHash = data.toString().hashCode();
                 area.setText( data.toString() ); // set text area
                 openedFile = selectedFile; /// Informs save method
             } catch (FileNotFoundException e) {

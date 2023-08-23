@@ -16,10 +16,11 @@ import java.util.Scanner;
 
 public class Main extends JFrame implements ActionListener {
     JMenu fileMenu, searchMenu, viewMenu, manageMenu, helpMenu;
-    JMenuItem newItem, openItem, saveItem, exitItem, findItem, aboutItem;
+    JMenuItem newItem, openItem, saveAsItem, saveItem, exitItem, findItem, aboutItem;
     private static JTextArea area;
     private static Highlighter high;
     private Color highLighterColor = Color.ORANGE;
+    private File openedFile = null;
 
     public static void main(String[] args) { new Main(); }
 
@@ -43,7 +44,8 @@ public class Main extends JFrame implements ActionListener {
         /// Adding items and action listeners
         newItem = new JMenuItem("New");
         openItem = new JMenuItem("Open");
-        saveItem = new JMenuItem("Save As");
+        saveItem = new JMenuItem("Save");
+        saveAsItem = new JMenuItem("Save as");
         exitItem = new JMenuItem("Exit");
         findItem = new JMenuItem("Find");
         aboutItem = new JMenuItem("About");
@@ -52,6 +54,7 @@ public class Main extends JFrame implements ActionListener {
         newItem.addActionListener(this);
         openItem.addActionListener(this);
         saveItem.addActionListener(this);
+        saveAsItem.addActionListener(this);
         exitItem.addActionListener(this);
         findItem.addActionListener(this);
         aboutItem.addActionListener(this);
@@ -60,6 +63,7 @@ public class Main extends JFrame implements ActionListener {
         fileMenu.add(newItem);
         fileMenu.add(openItem);
         fileMenu.add(saveItem);
+        fileMenu.add(saveAsItem);
         fileMenu.add(exitItem);
         searchMenu.add(findItem);
         helpMenu.add(aboutItem);
@@ -91,6 +95,9 @@ public class Main extends JFrame implements ActionListener {
             System.out.println("New"); // To suppress warning
             /// Operations for new
         }
+        if (source.equals(saveAsItem)) {
+            SaveAs();
+        }
         if (source.equals(saveItem)) {
             Save();
         }
@@ -121,6 +128,8 @@ public class Main extends JFrame implements ActionListener {
         int result = fileChooser.showOpenDialog( null );
 
         if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+
             try {
                 File file = new File( fileChooser.getSelectedFile().getAbsolutePath() );
                 StringBuilder data = new StringBuilder(); // define string builder
@@ -130,6 +139,7 @@ public class Main extends JFrame implements ActionListener {
                     data.append(myReader.nextLine()).append('\n'); // get line and append new line to maintain formatting
                 }
                 area.setText( data.toString() ); // set text area
+                openedFile = selectedFile; /// Informs save method
             } catch (FileNotFoundException e) {
                 System.err.println( "Error "+ e.getMessage() );
             }
@@ -160,9 +170,7 @@ public class Main extends JFrame implements ActionListener {
         }
     }
 
-    private void Save() {
-        System.out.println("Save");
-
+    private void SaveAs() {
         /// Navigate to directory
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
@@ -177,9 +185,27 @@ public class Main extends JFrame implements ActionListener {
                 String message = "File saved successfully";
                 JOptionPane.showMessageDialog(this, message, "Save success", JOptionPane.INFORMATION_MESSAGE); /// Display save success message
                 System.out.println("File saved");
+                openedFile = selectedFile;
             } catch (IOException e) {
                 System.err.println("Error saving file:" + e.getMessage());
             }
         }
     }
+
+    private void Save() {
+        if (openedFile != null) { /// Check if file has been opened
+            try (PrintWriter writer = new PrintWriter(openedFile)) {
+                String textToSave = area.getText(); /// Get text
+                writer.write(textToSave); /// Save to file
+                writer.flush();
+                String message = "File saved successfully";
+                JOptionPane.showMessageDialog(this, message, "Save success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException e) {
+                System.err.println("Error saving file: " + e.getMessage());
+            }
+        } else { /// If file has not been opened
+            JOptionPane.showMessageDialog(this, "Please open a file or create a new one before saving.", "Save Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 }

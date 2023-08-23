@@ -16,7 +16,7 @@ import java.util.Scanner;
 
 public class Main extends JFrame implements ActionListener {
     JMenu fileMenu, searchMenu, viewMenu, manageMenu, helpMenu;
-    JMenuItem newItem, openItem, saveItem, exitItem, findItem, aboutItem;
+    JMenuItem newItem, openItem, saveItem, saveAsItem, exitItem, findItem, aboutItem;
     private static JTextArea area;
     private static Highlighter high;
     private Color highLighterColor = Color.ORANGE;

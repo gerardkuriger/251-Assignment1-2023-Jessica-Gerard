@@ -22,7 +22,7 @@ public class Main extends JFrame implements ActionListener {
     JLabel timeDateLabel;
     private static JTextArea area;
     private static Highlighter high;
-    private Color highLighterColor = Color.ORANGE;
+    private final Color highLighterColor = Color.ORANGE;
     private File openedFile = null;
     private static int areaHash;
 
@@ -238,7 +238,7 @@ public class Main extends JFrame implements ActionListener {
     }
 
     private void insertDateAndTime() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss\n\n");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss\n\n");
         String currentDateAndTime = dateFormat.format(new Date());
         timeDateLabel.setText("Time and Date: " + currentDateAndTime + "  "); /// Display date and time in textarea
     }

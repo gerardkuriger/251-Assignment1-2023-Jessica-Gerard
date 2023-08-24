@@ -93,6 +93,7 @@ public class Main extends JFrame implements ActionListener {
         // Adding text field
         area = new JTextArea();
         area.setSize(650, 700);
+        //areaHash = area.getText().hashCode();
         add(area);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
@@ -103,43 +104,31 @@ public class Main extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent event) {
         JComponent source = (JComponent) event.getSource(); /// Get source of action
-        if (source.equals(newItem)) {
-            New();
-        }
-        if (source.equals(saveAsItem)) {
-            SaveAs();
-        }
-        if (source.equals(saveItem)) {
-            Save();
-        }
-        if (source.equals(openItem)) {
-            Open(); // Create open function
-        }
-        if (source.equals(exitItem)) {
-            System.exit(0);
-        }
-        if (source.equals(findItem)) {
+        if (source.equals(newItem)){ New(); }
+        if (source.equals(saveAsItem)){ SaveAs(); }
+        if (source.equals(saveItem)){ Save(); }
+        if (source.equals(openItem)){ Open(); }
+        if (source.equals(exitItem)){ System.exit(0); }
+        if (source.equals(findItem)){
             high = area.getHighlighter();
             high.removeAllHighlights(); // clear any preexisting highlights
-            Search( JOptionPane.showInputDialog(this, "Find"), area.getText().toLowerCase(), 0 );
+            Search(JOptionPane.showInputDialog(this, "Find"), area.getText().toLowerCase(), 0);
         }
-        if (source.equals(aboutItem)) {
+        if (source.equals(aboutItem)){
             String message = """
-                    Team Members:
-                    - Gerard Kuriger
-                    - Jessica Lang\s
-                     This is a text editor."""; /// Creating the message
+                        Team Members:
+                        - Gerard Kuriger
+                        - Jessica Lang\s
+                         This is a text editor."""; /// Creating the message
             JOptionPane.showMessageDialog(this, message, "About", JOptionPane.INFORMATION_MESSAGE); /// Displaying the information message
         }
-        if (source.equals(dateAndTimeItem)) {
-            insertDateAndTime();
-        }
+        if (source.equals(dateAndTimeItem)){ insertDateAndTime(); }
     }
 
     private void New(){
         System.out.println("New");
         // If Test Field is not empty prompt to save
-        if ( !area.getText().isBlank()) {
+        if ( !area.getText().isEmpty() ) {
             if (areaHash == area.getText().hashCode()) {
                 New();
             } else {
@@ -153,7 +142,6 @@ public class Main extends JFrame implements ActionListener {
                 }
             }
         }
-
     }
 
     private void Open(){
@@ -221,6 +209,7 @@ public class Main extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, message, "Save success", JOptionPane.INFORMATION_MESSAGE); /// Display save success message
                 System.out.println("File saved");
                 openedFile = selectedFile;
+                areaHash = textToSave.hashCode();
             } catch (IOException e) {
                 System.err.println("Error saving file:" + e.getMessage());
             }
@@ -235,6 +224,7 @@ public class Main extends JFrame implements ActionListener {
                 writer.flush();
                 String message = "File saved successfully";
                 JOptionPane.showMessageDialog(this, message, "Save success", JOptionPane.INFORMATION_MESSAGE);
+                areaHash = textToSave.hashCode();
             } catch (IOException e) {
                 System.err.println("Error saving file: " + e.getMessage());
             }

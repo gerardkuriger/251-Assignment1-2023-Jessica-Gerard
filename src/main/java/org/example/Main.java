@@ -104,14 +104,7 @@ public class Main extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         JComponent source = (JComponent) event.getSource(); /// Get source of action
         if (source.equals(newItem)) {
-            if ( area.getText().isEmpty() || areaHash == area.getText().hashCode() ){
-                New();
-            } else {
-                System.out.println("Area is not blank");
-                int res = JOptionPane.showConfirmDialog( this, "Save Changes?");
-                System.out.println(res);
-            }
-            /// Operations for new
+            New();
         }
         if (source.equals(saveAsItem)) {
             SaveAs();
@@ -146,7 +139,20 @@ public class Main extends JFrame implements ActionListener {
     private void New(){
         System.out.println("New");
         // If Test Field is not empty prompt to save
-
+        if ( !area.getText().isBlank()) {
+            if (areaHash == area.getText().hashCode()) {
+                New();
+            } else {
+                System.out.println("Area is not blank");
+                int res = JOptionPane.showConfirmDialog(this, "Save Changes?");
+                if (res == 0){
+                    SaveAs();
+                }
+                if (res == 1){
+                    area.setText("");
+                }
+            }
+        }
 
     }
 

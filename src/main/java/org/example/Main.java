@@ -12,11 +12,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Main extends JFrame implements ActionListener {
     JMenu fileMenu, searchMenu, viewMenu, manageMenu, helpMenu;
-    JMenuItem newItem, openItem, saveItem, saveAsItem, exitItem, findItem, aboutItem;
+    JMenuItem newItem, openItem, saveItem, saveAsItem, exitItem, findItem, aboutItem, dateAndTimeItem;
+    JLabel timeDateLabel;
     private static JTextArea area;
     private static Highlighter high;
     private Color highLighterColor = Color.ORANGE;
@@ -50,6 +53,7 @@ public class Main extends JFrame implements ActionListener {
         exitItem = new JMenuItem("Exit");
         findItem = new JMenuItem("Find");
         aboutItem = new JMenuItem("About");
+        dateAndTimeItem = new JMenuItem("Date and Time");
 
         /// Create Action listeners
         newItem.addActionListener(this);
@@ -59,6 +63,7 @@ public class Main extends JFrame implements ActionListener {
         exitItem.addActionListener(this);
         findItem.addActionListener(this);
         aboutItem.addActionListener(this);
+        dateAndTimeItem.addActionListener(this);
 
         /// Adding items to menus
         fileMenu.add(newItem);
@@ -68,6 +73,7 @@ public class Main extends JFrame implements ActionListener {
         fileMenu.add(exitItem);
         searchMenu.add(findItem);
         helpMenu.add(aboutItem);
+        viewMenu.add(dateAndTimeItem);
 
         /// Adding menus to menu bar
         menuBar.add(fileMenu);
@@ -75,6 +81,11 @@ public class Main extends JFrame implements ActionListener {
         menuBar.add(viewMenu);
         menuBar.add(manageMenu);
         menuBar.add(helpMenu);
+
+        /// Create label for time and date
+        timeDateLabel = new JLabel();
+        menuBar.add(Box.createHorizontalGlue()); /// Ensure it is on right side of menu bar
+        menuBar.add(timeDateLabel);
 
         // Set the menu bar
         setJMenuBar(menuBar);
@@ -126,6 +137,9 @@ public class Main extends JFrame implements ActionListener {
                     - Jessica Lang\s
                      This is a text editor."""; /// Creating the message
             JOptionPane.showMessageDialog(this, message, "About", JOptionPane.INFORMATION_MESSAGE); /// Displaying the information message
+        }
+        if (source.equals(dateAndTimeItem)) {
+            insertDateAndTime();
         }
     }
 
@@ -221,6 +235,12 @@ public class Main extends JFrame implements ActionListener {
         } else { /// If file has not been opened
             JOptionPane.showMessageDialog(this, "Please open a file or create a new one before saving.", "Save Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void insertDateAndTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss\n\n");
+        String currentDateAndTime = dateFormat.format(new Date());
+        timeDateLabel.setText("Time and Date: " + currentDateAndTime + "  "); /// Display date and time in textarea
     }
 
 }

@@ -33,7 +33,10 @@ public class Main extends JFrame implements ActionListener {
         setTitle("Text Editor");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(650, 700)); /// can change
-        setLayout(null); /// can also change
+
+        /// Setting layout
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new BorderLayout());
 
         /// Adding menu to JFrame
         JMenuBar menuBar = new JMenuBar();
@@ -90,12 +93,11 @@ public class Main extends JFrame implements ActionListener {
         // Set the menu bar
         setJMenuBar(menuBar);
 
-        // Adding text field
+        /// Adding text field with scroll pane
         area = new JTextArea();
-        area.setSize(650, 700);
-        //areaHash = area.getText().hashCode();
-        add(area);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        JScrollPane scrollPane = new JScrollPane(area);
+        contentPane.add(scrollPane, BorderLayout.CENTER);
+
 
         pack();
         setVisible(true);

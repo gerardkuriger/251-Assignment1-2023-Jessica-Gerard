@@ -24,7 +24,7 @@ public class Main extends JFrame implements ActionListener {
     private static Highlighter high;
     private final Color highLighterColor = Color.ORANGE;
     private File openedFile = null;
-    private static int areaHash;
+    private static int areaHash = 0;
 
     public static void main(String[] args) { new Main(); }
 
@@ -103,6 +103,8 @@ public class Main extends JFrame implements ActionListener {
         setVisible(true);
     }
 
+
+
     @Override
     public void actionPerformed(ActionEvent event) {
         JComponent source = (JComponent) event.getSource(); /// Get source of action
@@ -110,7 +112,7 @@ public class Main extends JFrame implements ActionListener {
         if (source.equals(saveAsItem)){ SaveAs(); }
         if (source.equals(saveItem)){ Save(); }
         if (source.equals(openItem)){ Open(); }
-        if (source.equals(exitItem)){ System.exit(0); }
+        if (source.equals(exitItem)){ dispose(); }
         if (source.equals(findItem)){
             high = area.getHighlighter();
             high.removeAllHighlights(); // clear any preexisting highlights
@@ -128,19 +130,20 @@ public class Main extends JFrame implements ActionListener {
     }
 
     private void New(){
-        System.out.println("New");
         // If Test Field is not empty prompt to save
         if ( !area.getText().isEmpty() ) {
-            if (areaHash == area.getText().hashCode()) {
-                New();
+            if (areaHash == area.getText().hashCode()) { // if the file has been saved
+                area.setText("");
             } else {
-                System.out.println("Area is not blank");
                 int res = JOptionPane.showConfirmDialog(this, "Save Changes?");
-                if (res == 0){
+                if (res == 0){ // Yes
                     SaveAs();
+                    New();
                 }
-                if (res == 1){
+                if (res == 1){ // No clear area and set openFile to null
+                    openedFile = null;
                     area.setText("");
+                    areaHash = 0;
                 }
             }
         }
@@ -171,9 +174,7 @@ public class Main extends JFrame implements ActionListener {
         }
     }
 
-    private void Search( String searchTerm, String searchText, int b ){ // finds first instance of
-        System.out.println("Search");
-
+    private void Search( String searchTerm, String searchText, int b ){ // finds first instance of searchTerm
         if ( searchText.contains(searchTerm.toLowerCase()) ) { // not case-sensitive
             System.out.println(searchTerm + " Found");
             try{

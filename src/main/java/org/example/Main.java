@@ -19,6 +19,7 @@ import java.util.Scanner;
 public class Main extends JFrame implements ActionListener {
     JMenu fileMenu, searchMenu, viewMenu, manageMenu, helpMenu;
     JMenuItem newItem, openItem, saveItem, saveAsItem, exitItem, findItem, aboutItem, dateAndTimeItem;
+    JLabel timeDateLabel;
     private static JTextArea area;
     private static Highlighter high;
     private Color highLighterColor = Color.ORANGE;
@@ -80,6 +81,11 @@ public class Main extends JFrame implements ActionListener {
         menuBar.add(viewMenu);
         menuBar.add(manageMenu);
         menuBar.add(helpMenu);
+
+        /// Create label for time and date
+        timeDateLabel = new JLabel();
+        menuBar.add(Box.createHorizontalGlue()); /// Ensure it is on right side of menu bar
+        menuBar.add(timeDateLabel);
 
         // Set the menu bar
         setJMenuBar(menuBar);
@@ -234,7 +240,7 @@ public class Main extends JFrame implements ActionListener {
     private void insertDateAndTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss\n\n");
         String currentDateAndTime = dateFormat.format(new Date());
-        area.insert(currentDateAndTime, 0); /// Display date and time in textarea
+        timeDateLabel.setText("Time and Date: " + currentDateAndTime + "  "); /// Display date and time in textarea
     }
 
 }

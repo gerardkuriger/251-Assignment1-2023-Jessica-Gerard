@@ -2,12 +2,15 @@ package org.example;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
 import java.awt.Color;
 import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -97,6 +100,15 @@ public class Main extends JFrame implements ActionListener {
         area = new JTextArea();
         JScrollPane scrollPane = new JScrollPane(area);
         contentPane.add(scrollPane, BorderLayout.CENTER);
+
+        area.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON3) { /// If right click
+                    showSCPCmenu(e.getX(), e.getY()); /// Pass mouse coordinates to method
+                }
+            }
+        });
 
 
         pack();
@@ -240,6 +252,32 @@ public class Main extends JFrame implements ActionListener {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss\n\n");
         String currentDateAndTime = dateFormat.format(new Date());
         timeDateLabel.setText("Time and Date: " + currentDateAndTime + "  "); /// Display date and time in textarea
+    }
+
+    private void showSCPCmenu(int x, int y) {
+
+        /// Create popupmenu
+        JPopupMenu scpcMenu = new JPopupMenu();
+
+        /// Create menu items
+        JMenuItem cutItem = new JMenuItem(new DefaultEditorKit.CutAction());
+        JMenuItem copyItem = new JMenuItem(new DefaultEditorKit.CopyAction());
+        JMenuItem pasteItem = new JMenuItem(new DefaultEditorKit.PasteAction());
+        JMenuItem selectAllItem = new JMenuItem("Select All");
+        cutItem.setText("Cut");
+        copyItem.setText("Copy");
+        pasteItem.setText("Paste");
+
+        selectAllItem.addActionListener(e -> area.selectAll()); /// Select all text in textarea
+
+        /// Add items to popupmenu
+        scpcMenu.add(cutItem);
+        scpcMenu.add(copyItem);
+        scpcMenu.add(pasteItem);
+        scpcMenu.add(selectAllItem);
+
+        /// Show popupmenu one text area at mouse coordinates
+        scpcMenu.show(area, x, y);
     }
 
 }

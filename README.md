@@ -3,7 +3,7 @@ Assignment 1 SEDC
 
 Contributors:
 Gerard Kuriger - 20006214
-Jessica Lang - 
+Jessica Lang - 22003612
 
 Discription:
 This is an Application designed to edit text based files in accordance to the requirements laid out in

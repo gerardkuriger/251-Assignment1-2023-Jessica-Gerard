@@ -11,6 +11,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,7 +25,7 @@ import java.util.Scanner;
 
 public class Main extends JFrame implements ActionListener {
     JMenu fileMenu, searchMenu, viewMenu, manageMenu, helpMenu;
-    JMenuItem newItem, openItem, saveItem, saveAsItem, exitItem, findItem, aboutItem, dateAndTimeItem;
+    JMenuItem newItem, openItem, saveItem, saveAsItem, exitItem, findItem, aboutItem, dateAndTimeItem, printItem;
     JLabel timeDateLabel;
     private static JTextArea area;
     private static Highlighter high;
@@ -60,6 +64,7 @@ public class Main extends JFrame implements ActionListener {
         findItem = new JMenuItem("Find");
         aboutItem = new JMenuItem("About");
         dateAndTimeItem = new JMenuItem("Date and Time");
+        printItem = new JMenuItem("Print");
 
         /// Create Action listeners
         newItem.addActionListener(this);
@@ -70,6 +75,7 @@ public class Main extends JFrame implements ActionListener {
         findItem.addActionListener(this);
         aboutItem.addActionListener(this);
         dateAndTimeItem.addActionListener(this);
+        printItem.addActionListener(this);
 
         /// Adding items to menus
         fileMenu.add(newItem);
@@ -77,6 +83,7 @@ public class Main extends JFrame implements ActionListener {
         fileMenu.add(saveItem);
         fileMenu.add(saveAsItem);
         fileMenu.add(exitItem);
+        fileMenu.add(printItem);
         searchMenu.add(findItem);
         helpMenu.add(aboutItem);
         viewMenu.add(dateAndTimeItem);
@@ -139,6 +146,7 @@ public class Main extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(this, message, "About", JOptionPane.INFORMATION_MESSAGE); /// Displaying the information message
         }
         if (source.equals(dateAndTimeItem)){ insertDateAndTime(); }
+        if (source.equals(printItem)) { printText(); }
     }
 
     private void New(){
@@ -279,5 +287,42 @@ public class Main extends JFrame implements ActionListener {
         /// Show popupmenu one text area at mouse coordinates
         scpcMenu.show(area, x, y);
     }
+
+    private void printText() {
+        if (area.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nothing to print, the text area is empty.", "Print Error", JOptionPane.ERROR_MESSAGE);
+            return; /// Nothing to print return
+        }
+
+        PrinterJob job = PrinterJob.getPrinterJob(); /// Create printer job
+        PageFormat pageFormat = job.defaultPage();
+        pageFormat.setOrientation(PageFormat.PORTRAIT); /// Portrait orientation
+
+        job.setPrintable(new Printable() {
+            @Override
+            public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+                if (pageIndex > 0) { /// Check if page index is out of range
+                    return Printable.NO_SUCH_PAGE;
+                }
+
+                Graphics2D g2d = (Graphics2D) graphics;
+                g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY()); /// Translate graphics to printable area
+
+                area.print(g2d); /// Print text
+                return Printable.PAGE_EXISTS; /// Page printed
+            }
+        }, pageFormat);
+
+        if (job.printDialog()) {
+            try {
+                /// Start printing
+                job.print();
+            } catch (PrinterException e) { /// Error
+                JOptionPane.showMessageDialog(this, "Error printing: " + e.getMessage(), "Print Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+
 
 }

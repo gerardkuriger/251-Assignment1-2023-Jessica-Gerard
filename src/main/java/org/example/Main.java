@@ -24,8 +24,9 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class Main extends JFrame implements ActionListener {
-    JMenu fileMenu, searchMenu, viewMenu, manageMenu, helpMenu;
-    JMenuItem newItem, openItem, saveItem, saveAsItem, exitItem, findItem, aboutItem, dateAndTimeItem, printItem;
+    JMenu fileMenu; JMenu searchMenu; JMenu viewMenu; JMenu manageMenu; JMenu helpMenu;
+    JMenuItem newItem; JMenuItem openItem; JMenuItem saveItem; JMenuItem saveAsItem; JMenuItem exitItem;
+    JMenuItem findItem; JMenuItem aboutItem; JMenuItem dateAndTimeItem; JMenuItem printItem;
     JLabel timeDateLabel;
     private static JTextArea area;
     private static Highlighter high;
@@ -112,7 +113,7 @@ public class Main extends JFrame implements ActionListener {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON3) { /// If right click
-                    showSCPCmenu(e.getX(), e.getY()); /// Pass mouse coordinates to method
+                    showSCPCMenu(e.getX(), e.getY()); /// Pass mouse coordinates to method
                 }
             }
         });
@@ -200,13 +201,13 @@ public class Main extends JFrame implements ActionListener {
             try{
                 int s = searchText.indexOf(searchTerm);
 
-                Highlighter.HighlightPainter DefaultHighlightPainter = new DefaultHighlightPainter( highLighterColor );
+                Highlighter.HighlightPainter defaultHighlightPainter = new DefaultHighlightPainter( highLighterColor );
                 // Apply Beginning offset to account for removed searched section
-                high.addHighlight( b+s, b+s+searchTerm.length(), DefaultHighlightPainter );
+                high.addHighlight( b+s, b+s+searchTerm.length(), defaultHighlightPainter );
                 // Remove searched section from searchText
-                searchText = searchText.substring( s+searchTerm.length() );
+                String newSegment = searchText.substring( s+searchTerm.length() );
                 // Recurse
-                Search( searchTerm, searchText, b+s+searchTerm.length() );
+                Search( searchTerm, newSegment, b+s+searchTerm.length() );
 
             }catch (BadLocationException e){
                 System.err.println( "Error "+ e.getMessage() );
@@ -262,10 +263,10 @@ public class Main extends JFrame implements ActionListener {
         timeDateLabel.setText("Time and Date: " + currentDateAndTime + "  "); /// Display date and time in textarea
     }
 
-    private void showSCPCmenu(int x, int y) {
+    private void showSCPCMenu(int x, int y) {
 
         /// Create popupmenu
-        JPopupMenu scpcMenu = new JPopupMenu();
+        JPopupMenu SCPCMenu = new JPopupMenu();
 
         /// Create menu items
         JMenuItem cutItem = new JMenuItem(new DefaultEditorKit.CutAction());
@@ -279,13 +280,13 @@ public class Main extends JFrame implements ActionListener {
         selectAllItem.addActionListener(e -> area.selectAll()); /// Select all text in textarea
 
         /// Add items to popupmenu
-        scpcMenu.add(cutItem);
-        scpcMenu.add(copyItem);
-        scpcMenu.add(pasteItem);
-        scpcMenu.add(selectAllItem);
+        SCPCMenu.add(cutItem);
+        SCPCMenu.add(copyItem);
+        SCPCMenu.add(pasteItem);
+        SCPCMenu.add(selectAllItem);
 
         /// Show popupmenu one text area at mouse coordinates
-        scpcMenu.show(area, x, y);
+        SCPCMenu.show(area, x, y);
     }
 
     private void printText() {
@@ -298,19 +299,16 @@ public class Main extends JFrame implements ActionListener {
         PageFormat pageFormat = job.defaultPage();
         pageFormat.setOrientation(PageFormat.PORTRAIT); /// Portrait orientation
 
-        job.setPrintable(new Printable() {
-            @Override
-            public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-                if (pageIndex > 0) { /// Check if page index is out of range
-                    return Printable.NO_SUCH_PAGE;
-                }
-
-                Graphics2D g2d = (Graphics2D) graphics;
-                g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY()); /// Translate graphics to printable area
-
-                area.print(g2d); /// Print text
-                return Printable.PAGE_EXISTS; /// Page printed
+        job.setPrintable((graphics, pageFormat1, pageIndex) -> {
+            if (pageIndex > 0) { /// Check if page index is out of range
+                return Printable.NO_SUCH_PAGE;
             }
+
+            Graphics2D g2d = (Graphics2D) graphics;
+            g2d.translate(pageFormat1.getImageableX(), pageFormat1.getImageableY()); /// Translate graphics to printable area
+
+            area.print(g2d); /// Print text
+            return Printable.PAGE_EXISTS; /// Page printed
         }, pageFormat);
 
         if (job.printDialog()) {
